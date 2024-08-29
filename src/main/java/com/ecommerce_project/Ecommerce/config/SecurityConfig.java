@@ -4,7 +4,6 @@ import com.ecommerce_project.Ecommerce.security.JwtAuthenticationFilter;
 import com.ecommerce_project.Ecommerce.security.JwtUtil;
 import com.ecommerce_project.Ecommerce.service.CustomUserDetailsService;
 import org.apache.naming.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,25 +18,26 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
+    private final CustomUserDetailsService customUserDetailsService;
+    private final JwtUtil jwtUtil;
 
-    @Autowired
-    private JwtUtil jwtUtil;
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService, JwtUtil jwtUtil) {
+        this.customUserDetailsService = customUserDetailsService;
+        this.jwtUtil = jwtUtil;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/public/**").permitAll() // Public endpoints
                         .requestMatchers("/admin/**").hasRole("ADMIN") // Admin endpoints
                         .requestMatchers("/user/**").hasRole("USER") // User endpoints
                         .anyRequest().authenticated()
                 )
-                .exceptionHandling()
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+               .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                );
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
