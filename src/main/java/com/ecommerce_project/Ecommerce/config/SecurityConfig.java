@@ -1,5 +1,6 @@
 package com.ecommerce_project.Ecommerce.config;
 
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import com.ecommerce_project.Ecommerce.exception.CustomAccessDeniedHandler;
 import com.ecommerce_project.Ecommerce.exception.CustomAuthenticationEntryPoint;
 import com.ecommerce_project.Ecommerce.security.CustomUserDetailsService;
@@ -23,7 +24,6 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-
 public class SecurityConfig {
 
     @Autowired
@@ -41,8 +41,14 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/api/auth/**").permitAll()
+                                .requestMatchers("/api/auth/**").permitAll() // Use antMatchers
+                                .requestMatchers("/admin/**").hasRole("ADMIN") // Use antMatchers
                                 .anyRequest().authenticated()
+                )
+                .exceptionHandling(exceptions ->
+                        exceptions
+                                .authenticationEntryPoint(customAuthenticationEntryPoint)
+                                .accessDeniedHandler(customAccessDeniedHandler)
                 )
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -50,7 +56,6 @@ public class SecurityConfig {
 
         return http.build();
     }
-
 
     @Bean
     public AuthenticationManager authenticationManager(

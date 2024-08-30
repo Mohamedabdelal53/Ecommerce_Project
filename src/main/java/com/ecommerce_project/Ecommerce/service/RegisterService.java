@@ -48,7 +48,7 @@ public class RegisterService {
         user.setEmail(registerationDTO.getEmail());
 
         // Find and set Role
-        Optional<Role> role = roleRepo.findByName("USER");
+        Optional<Role> role = roleRepo.findByName("ROLE_USER");
         user.setRole(role.get());
         user.setAddress(savedAddress); // Set the saved address to user
 
@@ -75,7 +75,7 @@ public class RegisterService {
         user.setEmail(registerationDTO.getEmail());
 
         // Find and set Role
-        Optional<Role> role = roleRepo.findByName("ADMIN");
+        Optional<Role> role = roleRepo.findByName("ROLE_ADMIN");
         user.setRole(role.get());
         user.setAddress(savedAddress); // Set the saved address to user
 
