@@ -1,12 +1,16 @@
 package com.ecommerce_project.Ecommerce.controller;
 
-import com.ecommerce_project.Ecommerce.model.RegisterationDTO;
+import com.ecommerce_project.Ecommerce.DTO.LoginDTO;
+import com.ecommerce_project.Ecommerce.DTO.RegisterationDTO;
 import com.ecommerce_project.Ecommerce.repository.RoleRepo;
 import com.ecommerce_project.Ecommerce.repository.UserRepo;
 import com.ecommerce_project.Ecommerce.service.RegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,5 +47,14 @@ public class AuthController {
         }else{
             return ResponseEntity.ok(registerService.addUser(registerationDTO));
         }
+    }
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO){
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                loginDTO.getUsername(), loginDTO.getPassword())
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return ResponseEntity.ok("Login Successful");
     }
 }

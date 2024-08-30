@@ -3,7 +3,7 @@ package com.ecommerce_project.Ecommerce.service;
 import com.ecommerce_project.Ecommerce.entities.Address;
 import com.ecommerce_project.Ecommerce.entities.Role;
 import com.ecommerce_project.Ecommerce.entities.Users;
-import com.ecommerce_project.Ecommerce.model.RegisterationDTO;
+import com.ecommerce_project.Ecommerce.DTO.RegisterationDTO;
 import com.ecommerce_project.Ecommerce.repository.AddressRepo;
 import com.ecommerce_project.Ecommerce.repository.RoleRepo;
 import com.ecommerce_project.Ecommerce.repository.UserRepo;
