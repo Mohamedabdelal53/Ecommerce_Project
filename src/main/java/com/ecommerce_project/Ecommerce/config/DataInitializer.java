@@ -21,13 +21,13 @@ public class DataInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-            Optional<Role> admin = roleRepository.findByName("ADMIN");
+            Optional<Role> admin = roleRepository.findByName("ROLE_ADMIN");
             if(admin.isEmpty()){
-                roleRepository.save(new Role("ADMIN"));
+                roleRepository.save(new Role("ROLE_ADMIN"));
             }
-            Optional<Role> user = roleRepository.findByName("USER");
+            Optional<Role> user = roleRepository.findByName("ROLE_USER");
             if(user.isEmpty()){
-                roleRepository.save(new Role("USER"));
+                roleRepository.save(new Role("ROLE_USER"));
             }
     }
 }

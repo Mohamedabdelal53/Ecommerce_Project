@@ -49,9 +49,6 @@ public class RegisterService {
 
         // Find and set Role
         Optional<Role> role = roleRepo.findByName("USER");
-        if (role.isEmpty()) {
-            throw new RuntimeException("Role USER not found");
-        }
         user.setRole(role.get());
         user.setAddress(savedAddress); // Set the saved address to user
 
@@ -59,5 +56,32 @@ public class RegisterService {
         userRepo.save(user);
 
         return "User Registration Success";
+    }
+
+    public String addAdmin(RegisterationDTO registerationDTO) {
+        // Create and save Address entity
+        Address address = new Address();
+        address.setStreet(registerationDTO.getStreet());
+        address.setCity(registerationDTO.getCity());
+        address.setState(registerationDTO.getState());
+        address.setPostalCode(registerationDTO.getPostalCode());
+        address.setCountry(registerationDTO.getCountry());
+        Address savedAddress = addressRepo.save(address); // Save address first
+
+        // Create User entity
+        Users user = new Users();
+        user.setUsername(registerationDTO.getUsername());
+        user.setPassword(passwordEncoder.encode(registerationDTO.getPassword()));
+        user.setEmail(registerationDTO.getEmail());
+
+        // Find and set Role
+        Optional<Role> role = roleRepo.findByName("ADMIN");
+        user.setRole(role.get());
+        user.setAddress(savedAddress); // Set the saved address to user
+
+        // Save User entity
+        userRepo.save(user);
+
+        return "Admin Registration Success";
     }
 }

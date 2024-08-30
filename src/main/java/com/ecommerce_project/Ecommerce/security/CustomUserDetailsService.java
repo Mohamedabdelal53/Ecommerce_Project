@@ -24,7 +24,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Users user = userRepo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username Not Found"));
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(user.getRole().getName());
+        String roleName = user.getRole().getName();
+        if (!roleName.startsWith("ROLE_")) {
+            roleName = "ROLE_" + roleName;
+        }
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(roleName);
         return new User(user.getUsername(), user.getPassword(), Collections.singletonList(authority));
     }
 }

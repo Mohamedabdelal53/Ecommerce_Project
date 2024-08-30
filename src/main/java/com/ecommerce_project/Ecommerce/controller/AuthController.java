@@ -7,6 +7,7 @@ import com.ecommerce_project.Ecommerce.repository.UserRepo;
 import com.ecommerce_project.Ecommerce.service.RegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -56,5 +57,16 @@ public class AuthController {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return ResponseEntity.ok("Login Successful");
+    }
+
+
+    @PreAuthorize("has('ADMIN')")
+    @PostMapping("/admin/register")
+    public ResponseEntity<String> registerAdmin(@RequestBody RegisterationDTO registerationDTO){
+        if(userRepo.findByUsername(registerationDTO.getUsername()).isPresent()){
+            return ResponseEntity.badRequest().body("Username already exists");
+        }else{
+            return ResponseEntity.ok(registerService.addAdmin(registerationDTO));
+        }
     }
 }
