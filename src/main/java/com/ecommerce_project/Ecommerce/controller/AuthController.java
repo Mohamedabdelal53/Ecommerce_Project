@@ -5,8 +5,10 @@ import com.ecommerce_project.Ecommerce.DTO.LoginDTO;
 import com.ecommerce_project.Ecommerce.DTO.RegisterationDTO;
 import com.ecommerce_project.Ecommerce.repository.RoleRepo;
 import com.ecommerce_project.Ecommerce.repository.UserRepo;
-import com.ecommerce_project.Ecommerce.security.JWTGenerator;
-import com.ecommerce_project.Ecommerce.service.RegisterService;
+import com.ecommerce_project.Ecommerce.security.JWT.JWTGenerator;
+import com.ecommerce_project.Ecommerce.security.JWT.JwtBlacklistService;
+import com.ecommerce_project.Ecommerce.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +30,7 @@ public class AuthController {
     private UserRepo userRepo;
     private RoleRepo roleRepo;
     private PasswordEncoder passwordEncoder;
-    private RegisterService registerService;
+    private UserService registerService;
     private JWTGenerator jwtGenerator;
 
 
@@ -37,7 +39,7 @@ public class AuthController {
                           UserRepo userRepo,
                           RoleRepo roleRepo,
                           PasswordEncoder passwordEncoder,
-                          RegisterService registerService,
+                          UserService registerService,
                           JWTGenerator jwtGenerator) {
         this.authenticationManager = authenticationManager;
         this.userRepo = userRepo;
@@ -62,18 +64,23 @@ public class AuthController {
                 loginDTO.getUsername(), loginDTO.getPassword())
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = jwtGenerator.generateToken(authentication);
+        String token = jwtGenerator.generateToken(authentication.getName());
         return new ResponseEntity<>(new AuthResponseDTO(token), HttpStatus.OK);
     }
 
+    @Autowired
+    private JwtBlacklistService jwtBlacklistService; // Service for handling token blacklist
 
-    @PreAuthorize("has('ADMIN')")
-    @PostMapping("/admin/register")
-    public ResponseEntity<String> registerAdmin(@RequestBody RegisterationDTO registerationDTO){
-        if(userRepo.findByUsername(registerationDTO.getUsername()).isPresent()){
-            return ResponseEntity.badRequest().body("Username already exists");
-        }else{
-            return ResponseEntity.ok(registerService.addAdmin(registerationDTO));
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+            jwtBlacklistService.blacklistToken(token);  // Add token to blacklist
+            return ResponseEntity.ok("Logged out successfully");
         }
+
+        return ResponseEntity.badRequest().body("Invalid token");
     }
 }
