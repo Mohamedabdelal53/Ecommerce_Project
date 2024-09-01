@@ -68,4 +68,31 @@ public class UserService {
         }
         return "Login Fail";
     }
+
+    public String addAdmin(RegisterationDTO registerationDTO) {
+        // Create and save Address entity
+        Address address = new Address();
+        address.setStreet(registerationDTO.getStreet());
+        address.setCity(registerationDTO.getCity());
+        address.setState(registerationDTO.getState());
+        address.setPostalCode(registerationDTO.getPostalCode());
+        address.setCountry(registerationDTO.getCountry());
+        Address savedAddress = addressRepo.save(address); // Save address first
+
+        // Create User entity
+        Users admin = new Users();
+        admin.setUsername(registerationDTO.getUsername());
+        admin.setPassword(passwordEncoder.encode(registerationDTO.getPassword()));
+        admin.setEmail(registerationDTO.getEmail());
+
+        // Find and set Role
+        Optional<Role> role = roleRepo.findByName("ROLE_ADMIN");
+        admin.setRole(role.get());
+        admin.setAddress(savedAddress); // Set the saved address to user
+
+        // Save User entity
+        userRepo.save(admin);
+
+        return "Admin Registration Success";
+    }
 }
