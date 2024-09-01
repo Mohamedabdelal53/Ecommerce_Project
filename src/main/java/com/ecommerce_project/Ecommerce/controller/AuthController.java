@@ -2,7 +2,7 @@ package com.ecommerce_project.Ecommerce.controller;
 
 import com.ecommerce_project.Ecommerce.DTO.AuthResponseDTO;
 import com.ecommerce_project.Ecommerce.DTO.LoginDTO;
-import com.ecommerce_project.Ecommerce.DTO.RegisterationDTO;
+import com.ecommerce_project.Ecommerce.DTO.UserDTO;
 import com.ecommerce_project.Ecommerce.repository.RoleRepo;
 import com.ecommerce_project.Ecommerce.repository.UserRepo;
 import com.ecommerce_project.Ecommerce.security.JWT.JWTGenerator;
@@ -12,25 +12,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/v1/")
 public class AuthController {
     private AuthenticationManager authenticationManager;
     private UserRepo userRepo;
     private RoleRepo roleRepo;
     private PasswordEncoder passwordEncoder;
-    private UserService registerService;
+    private UserService userService;
     private JWTGenerator jwtGenerator;
 
 
@@ -39,27 +35,27 @@ public class AuthController {
                           UserRepo userRepo,
                           RoleRepo roleRepo,
                           PasswordEncoder passwordEncoder,
-                          UserService registerService,
+                          UserService userService,
                           JWTGenerator jwtGenerator) {
         this.authenticationManager = authenticationManager;
         this.userRepo = userRepo;
         this.roleRepo = roleRepo;
         this.passwordEncoder = passwordEncoder;
-        this.registerService = registerService;
+        this.userService = userService;
         this.jwtGenerator = jwtGenerator;
 
     }
-    @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterationDTO registerationDTO){
-        if(userRepo.findByUsername(registerationDTO.getUsername()).isPresent()){
+    @PostMapping("/auth/register")
+    public ResponseEntity<String> register(@RequestBody UserDTO userDTO){
+        if(userRepo.findByUsername(userDTO.getUsername()).isPresent()){
             return ResponseEntity.badRequest().body("Username already exists");
         }else{
-            return ResponseEntity.ok(registerService.addUser(registerationDTO));
+            return ResponseEntity.ok(userService.addUser(userDTO));
         }
     }
 
 
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDTO loginDTO){
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -73,7 +69,7 @@ public class AuthController {
     @Autowired
     private JwtBlacklistService jwtBlacklistService; // Service for handling token blacklist
 
-    @PostMapping("/logout")
+    @PostMapping("/auth/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
 
@@ -84,5 +80,14 @@ public class AuthController {
         }
 
         return ResponseEntity.badRequest().body("Invalid token");
+    }
+    @GetMapping("/users/{id}")
+    public ResponseEntity<UserDTO> getMyUser(@PathVariable Long id){
+        return ResponseEntity.ok(userService.getMyUser(id));
+    }
+
+    @PutMapping("/users/{id}")
+    public ResponseEntity<String> getMyUser(@PathVariable Long id, @RequestBody UserDTO userDTO){
+        return ResponseEntity.ok(userService.updateMyUser(id,userDTO));
     }
 }

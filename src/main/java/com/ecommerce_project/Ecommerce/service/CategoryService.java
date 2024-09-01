@@ -1,7 +1,6 @@
 package com.ecommerce_project.Ecommerce.service;
 
 import com.ecommerce_project.Ecommerce.DTO.CategoryDTO;
-import com.ecommerce_project.Ecommerce.DTO.CategoryDTOs;
 import com.ecommerce_project.Ecommerce.entities.Category;
 import com.ecommerce_project.Ecommerce.exception.APIException;
 import com.ecommerce_project.Ecommerce.repository.CategoryRepo;
@@ -32,12 +31,12 @@ public class CategoryService implements CategoryServiceimpl{
     }
 
     @Override
-    public CategoryDTOs getcategories() {
+    public List<CategoryDTO> getcategories() {
         List<CategoryDTO> CategoryDTOList = categoryRepo.findAll().stream().map(category ->
                 new CategoryDTO(category.getId(),category.getName()))
                 .collect(Collectors.toList());
 
-        return new CategoryDTOs(CategoryDTOList);
+        return CategoryDTOList;
     }
 
     @Override

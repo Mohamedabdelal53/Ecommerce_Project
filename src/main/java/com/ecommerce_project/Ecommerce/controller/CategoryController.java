@@ -1,13 +1,13 @@
 package com.ecommerce_project.Ecommerce.controller;
 
 import com.ecommerce_project.Ecommerce.DTO.CategoryDTO;
-import com.ecommerce_project.Ecommerce.DTO.CategoryDTOs;
 import com.ecommerce_project.Ecommerce.service.CategoryService;
-import com.ecommerce_project.Ecommerce.service.CategoryServiceimpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -27,15 +27,15 @@ public class CategoryController {
     }
 
     @GetMapping("/public/category")
-    public ResponseEntity<CategoryDTOs> getCategories(){
-        CategoryDTOs savedCategory = categoryService.getcategories();
-        return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);
+    public ResponseEntity<List<CategoryDTO>> getCategories(){
+        List<CategoryDTO> savedCategory = categoryService.getcategories();
+        return new ResponseEntity<>(savedCategory, HttpStatus.OK);
     }
 
     @PutMapping("/admin/category/{id}/update")
     public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO categoryDTO, @PathVariable Long id){
         CategoryDTO updatedCategory = categoryService.updateCategory(categoryDTO,id);
-        return new ResponseEntity<>(updatedCategory, HttpStatus.CREATED);
+        return new ResponseEntity<>(updatedCategory, HttpStatus.FOUND);
     }
 
     @DeleteMapping("/admin/category/{id}/delete")
