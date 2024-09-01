@@ -19,8 +19,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/v1/")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
     private AuthenticationManager authenticationManager;
     private UserRepo userRepo;
@@ -45,7 +47,7 @@ public class AuthController {
         this.jwtGenerator = jwtGenerator;
 
     }
-    @PostMapping("/auth/register")
+    @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody UserDTO userDTO){
         if(userRepo.findByUsername(userDTO.getUsername()).isPresent()){
             return ResponseEntity.badRequest().body("Username already exists");
@@ -55,7 +57,7 @@ public class AuthController {
     }
 
 
-    @PostMapping("/auth/login")
+    @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDTO loginDTO){
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -69,7 +71,7 @@ public class AuthController {
     @Autowired
     private JwtBlacklistService jwtBlacklistService; // Service for handling token blacklist
 
-    @PostMapping("/auth/logout")
+    @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
 
@@ -81,13 +83,5 @@ public class AuthController {
 
         return ResponseEntity.badRequest().body("Invalid token");
     }
-    @GetMapping("/users/{id}")
-    public ResponseEntity<UserDTO> getMyUser(@PathVariable Long id){
-        return ResponseEntity.ok(userService.getMyUser(id));
-    }
 
-    @PutMapping("/users/{id}")
-    public ResponseEntity<String> getMyUser(@PathVariable Long id, @RequestBody UserDTO userDTO){
-        return ResponseEntity.ok(userService.updateMyUser(id,userDTO));
-    }
 }

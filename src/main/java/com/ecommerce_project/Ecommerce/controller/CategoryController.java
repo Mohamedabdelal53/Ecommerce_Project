@@ -19,6 +19,14 @@ public class CategoryController {
     public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
+    @GetMapping("/public/categories")
+    public ResponseEntity<List<CategoryDTO>> getCategories(){
+        List<CategoryDTO> savedCategory = categoryService.getcategories();
+        return new ResponseEntity<>(savedCategory, HttpStatus.OK);
+    }
+
+
+    // ADMIN
 
     @PostMapping("/admin/category")
     public ResponseEntity<CategoryDTO> addCategory(@RequestBody CategoryDTO categoryDTO){
@@ -26,11 +34,6 @@ public class CategoryController {
         return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);
     }
 
-    @GetMapping("/public/category")
-    public ResponseEntity<List<CategoryDTO>> getCategories(){
-        List<CategoryDTO> savedCategory = categoryService.getcategories();
-        return new ResponseEntity<>(savedCategory, HttpStatus.OK);
-    }
 
     @PutMapping("/admin/category/{id}/update")
     public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO categoryDTO, @PathVariable Long id){

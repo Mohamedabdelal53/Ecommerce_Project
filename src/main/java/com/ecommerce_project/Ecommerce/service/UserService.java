@@ -23,7 +23,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class UserService {
+public class UserService implements UserServiceImpl{
     @Autowired
     private UserRepo userRepo;
     @Autowired
@@ -37,6 +37,7 @@ public class UserService {
     @Autowired
     private JWTGenerator jwtGenerator;
 
+    @Override
     public String addUser(UserDTO userDTO) {
         // Create and save Address entity
         Address address = new Address();
@@ -64,6 +65,7 @@ public class UserService {
         return "User Registration Success";
     }
 
+    @Override
     public String login(LoginDTO loginDTO) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
@@ -73,33 +75,7 @@ public class UserService {
         return "Login Fail";
     }
 
-    public String addAdmin(UserDTO userDTO) {
-        // Create and save Address entity
-        Address address = new Address();
-        address.setStreet(userDTO.getStreet());
-        address.setCity(userDTO.getCity());
-        address.setState(userDTO.getState());
-        address.setPostalCode(userDTO.getPostalCode());
-        address.setCountry(userDTO.getCountry());
-        Address savedAddress = addressRepo.save(address); // Save address first
-
-        // Create User entity
-        Users admin = new Users();
-        admin.setUsername(userDTO.getUsername());
-        admin.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        admin.setEmail(userDTO.getEmail());
-
-        // Find and set Role
-        Optional<Role> role = roleRepo.findByName("ROLE_ADMIN");
-        admin.setRole(role.get());
-        admin.setAddress(savedAddress); // Set the saved address to user
-
-        // Save User entity
-        userRepo.save(admin);
-
-        return "Admin Registration Success";
-    }
-
+    @Override
     public List<UserDTO> getAllUsers() {
         List<UserDTO> users = userRepo.findAll().stream().map(user ->{
                 Address address = user.getAddress();
@@ -117,6 +93,8 @@ public class UserService {
                 .collect(Collectors.toList());
         return users;
     }
+
+    @Override
     public String deleteUser(Long id){
         Users user = userRepo.findById(id).orElseThrow(()->new APIException("User Not Found"));
         String name = user.getUsername();
@@ -124,6 +102,7 @@ public class UserService {
         return name+" Account Is Deleted";
     }
 
+    @Override
     public UserDTO getMyUser(Long id){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String authenticatedUsername = authentication.getName();
@@ -141,6 +120,7 @@ public class UserService {
                 userAddress.getPostalCode(), userAddress.getCountry());
     }
 
+    @Override
     public String updateMyUser(Long id, UserDTO userDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String authenticatedUsername = authentication.getName();
@@ -167,8 +147,10 @@ public class UserService {
         user.setEmail(userDTO.getEmail());
 
         // Find and set Role
-        Optional<Role> role = roleRepo.findByName("ROLE_USER");
-        user.setRole(role.get());
+        if(user.getRole().getName() != "ROLE_ADMIN"){
+            Optional<Role> role = roleRepo.findByName("ROLE_USER");
+            user.setRole(role.get());
+        }
         user.setAddress(savedAddress); // Set the saved address to user
 
         // Save User entity

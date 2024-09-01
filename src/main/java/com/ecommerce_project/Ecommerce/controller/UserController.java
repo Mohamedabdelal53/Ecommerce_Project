@@ -11,40 +11,40 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin")
-public class AdminController {
+@RequestMapping("/api/v1")
+public class UserController {
     @Autowired
     private UserRepo userRepo;
     @Autowired
     private UserService userService;
 
-    public AdminController(UserRepo userRepo, UserService userService)
+    public UserController(UserRepo userRepo, UserService userService)
     {
         this.userRepo = userRepo;
         this.userService = userService;
     }
 
+    @GetMapping("/users/{id}")
+    public ResponseEntity<UserDTO> getMyUser(@PathVariable Long id){
+        return ResponseEntity.ok(userService.getMyUser(id));
+    }
 
-    @GetMapping("/")
-    public String helloAdmin(){
-        return "Hello Admin";
+    @PutMapping("/users/{id}")
+    public ResponseEntity<String> getMyUser(@PathVariable Long id, @RequestBody UserDTO userDTO){
+        return ResponseEntity.ok(userService.updateMyUser(id,userDTO));
     }
-    @PostMapping("/register")
-    public ResponseEntity<String> addminregister(@RequestBody UserDTO userDTO){
-        if(userRepo.findByUsername(userDTO.getUsername()).isPresent()){
-            return ResponseEntity.badRequest().body("Username already exists");
-        }else{
-            return ResponseEntity.ok(userService.addAdmin(userDTO));
-        }
-    }
-    @GetMapping("/users")
+
+    // ADMIN
+
+    @GetMapping("/admin/users")
     public ResponseEntity<List<UserDTO>> addminregister(){
         List<UserDTO> users = userService.getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/admin/users/{id}")
     public ResponseEntity<String> addminregister(@PathVariable Long id){
         return ResponseEntity.ok(userService.deleteUser(id));
     }
+
 
 }
