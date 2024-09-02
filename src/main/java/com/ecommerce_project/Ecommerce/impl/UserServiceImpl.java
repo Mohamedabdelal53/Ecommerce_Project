@@ -1,4 +1,4 @@
-package com.ecommerce_project.Ecommerce.service;
+package com.ecommerce_project.Ecommerce.impl;
 
 import com.ecommerce_project.Ecommerce.DTO.LoginDTO;
 import com.ecommerce_project.Ecommerce.DTO.UserDTO;
@@ -17,4 +17,6 @@ public interface UserServiceImpl {
     UserDTO getMyUser(Long id);
 
     String updateMyUser(Long id, UserDTO userDTO);
+
+    UserDTO getuserbyadmin(Long id);
 }

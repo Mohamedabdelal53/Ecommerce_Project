@@ -23,11 +23,17 @@ public class DataInitializer implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
             Optional<Role> admin = roleRepository.findByName("ROLE_ADMIN");
             if(admin.isEmpty()){
-                roleRepository.save(new Role("ROLE_ADMIN"));
+                Role adminu = new Role();
+                adminu.setRoleId(101L);
+                adminu.setName("ROLE_ADMIN");
+                roleRepository.save(adminu);
             }
             Optional<Role> user = roleRepository.findByName("ROLE_USER");
             if(user.isEmpty()){
-                roleRepository.save(new Role("ROLE_USER"));
+                Role useru = new Role();
+                useru.setRoleId(102L);
+                useru.setName("ROLE_USER");
+                roleRepository.save(useru);
             }
     }
 }

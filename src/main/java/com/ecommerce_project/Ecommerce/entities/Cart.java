@@ -1,14 +1,17 @@
 package com.ecommerce_project.Ecommerce.entities;
 
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
+@Transactional
 @Entity
 public class Cart {
     @Id
@@ -21,8 +24,6 @@ public class Cart {
 
     private BigDecimal totalAmount;
 
-    @OneToMany(mappedBy = "cart")
-    private List<CartItem> cartItems;
-
-    // Getters and Setters
+    @OneToMany(mappedBy = "cart", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true)
+    private List<CartItem> cartItems = new ArrayList<>();
 }

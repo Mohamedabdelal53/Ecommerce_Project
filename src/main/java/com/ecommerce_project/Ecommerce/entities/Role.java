@@ -1,6 +1,7 @@
 package com.ecommerce_project.Ecommerce.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 public class Role{
 
     @Id
@@ -17,8 +19,4 @@ public class Role{
 
     @Column(nullable = false, unique = true)
     private String name;
-
-    public Role(String roleName) {
-        this.name = roleName;
-    }
 }

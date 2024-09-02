@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Data
@@ -15,12 +17,8 @@ public class UserDTO {
     @JsonIgnore
     private String password;
     private String email;
-    private String street;
-    private String city;
-    private String state;
-    private String postalCode;
-    private String country;
-
+    private List<AddressDTO> address;
+    private CartDTO cart;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public String getPassword() {
         return password;

@@ -1,4 +1,4 @@
-package com.ecommerce_project.Ecommerce.service;
+package com.ecommerce_project.Ecommerce.impl;
 
 import com.ecommerce_project.Ecommerce.DTO.CategoryDTO;
 

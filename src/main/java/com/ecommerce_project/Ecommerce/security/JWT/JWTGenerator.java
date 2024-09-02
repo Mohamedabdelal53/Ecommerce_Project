@@ -1,4 +1,5 @@
 package com.ecommerce_project.Ecommerce.security.JWT;
+import com.ecommerce_project.Ecommerce.config.APPConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -39,7 +40,7 @@ public class JWTGenerator {
                 .add(claims)
                 .subject(username)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 60 * 60 * 30 * 1000))
+                .expiration(new Date(System.currentTimeMillis() + APPConstants.JWT_TOKEN_VALIDITY))
                 .and()
                 .signWith(getKey())
                 .compact();

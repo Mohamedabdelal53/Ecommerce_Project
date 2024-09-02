@@ -1,12 +1,11 @@
 package com.ecommerce_project.Ecommerce.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 public class Address {
 
@@ -16,6 +15,9 @@ public class Address {
 
     @Column(nullable = false, length = 255)
     private String street;
+
+    @Column(nullable = false, length = 100)
+    private String buildingName;
 
     @Column(nullable = false, length = 100)
     private String city;
@@ -29,7 +31,7 @@ public class Address {
     @Column(nullable = false, length = 100)
     private String country;
 
-    @OneToOne(mappedBy = "address")
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private Users user;
-
 }
