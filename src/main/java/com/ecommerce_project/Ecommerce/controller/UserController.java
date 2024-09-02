@@ -37,14 +37,19 @@ public class UserController {
     // ADMIN
 
     @GetMapping("/admin/users")
-    public ResponseEntity<List<UserDTO>> addminregister(){
+    public ResponseEntity<List<UserDTO>> getAllUsers(){
         List<UserDTO> users = userService.getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
     @DeleteMapping("/admin/users/{id}")
-    public ResponseEntity<String> addminregister(@PathVariable Long id){
+    public ResponseEntity<String> deleteuser(@PathVariable Long id){
         return ResponseEntity.ok(userService.deleteUser(id));
     }
 
+
+    @GetMapping("/admin/users/{id}")
+    public ResponseEntity<UserDTO> getuserbyadmin(@PathVariable Long id){
+        return ResponseEntity.ok(userService.getuserbyadmin(id));
+    }
 
 }

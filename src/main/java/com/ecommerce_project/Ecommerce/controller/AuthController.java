@@ -9,6 +9,7 @@ import com.ecommerce_project.Ecommerce.security.JWT.JWTGenerator;
 import com.ecommerce_project.Ecommerce.security.JWT.JwtBlacklistService;
 import com.ecommerce_project.Ecommerce.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +49,7 @@ public class AuthController {
 
     }
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody UserDTO userDTO){
+    public ResponseEntity<String> register(@RequestBody @NotNull UserDTO userDTO){
         if(userRepo.findByUsername(userDTO.getUsername()).isPresent()){
             return ResponseEntity.badRequest().body("Username already exists");
         }else{
@@ -58,7 +59,7 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDTO loginDTO){
+    public ResponseEntity<AuthResponseDTO> login(@RequestBody @NotNull LoginDTO loginDTO){
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                 loginDTO.getUsername(), loginDTO.getPassword())
@@ -72,7 +73,7 @@ public class AuthController {
     private JwtBlacklistService jwtBlacklistService; // Service for handling token blacklist
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request) {
+    public ResponseEntity<String> logout(@NotNull HttpServletRequest request) {
         String token = request.getHeader("Authorization");
 
         if (token != null && token.startsWith("Bearer ")) {
