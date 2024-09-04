@@ -24,6 +24,8 @@ public class Cart {
 
     private BigDecimal totalAmount;
 
+
+
     @OneToMany(mappedBy = "cart", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true)
     private List<CartItem> cartItems = new ArrayList<>();
 }

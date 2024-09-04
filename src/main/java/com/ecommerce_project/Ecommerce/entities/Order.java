@@ -20,6 +20,13 @@ public class Order {
 
     private BigDecimal totalAmount;
 
+    public BigDecimal calculateTotalAmount() {
+        return orderItems.stream()
+                .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
