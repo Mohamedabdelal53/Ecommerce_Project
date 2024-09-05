@@ -103,4 +103,25 @@ public class ProductService implements ProductServiceImpl {
         productRepo.deleteById(productId);
         return "Product Deleted";
     }
+
+    @Override
+    public List<ProductDTO> searchProducts(String searchInput) {
+        // Split the input into multiple keywords
+        String[] keywords = searchInput.split(" ");
+
+        List<Product> products;
+        if (keywords.length > 1) {
+            // If more than one keyword, use multiple keyword search
+            products = productRepo.searchByMultipleKeywords(keywords[0], keywords[1]);
+        } else {
+            // For a single keyword, use the basic search
+            products = productRepo.searchByKeyword(keywords[0]);
+        }
+
+        return products.stream()
+                .map(product -> modelMapper.map(product, ProductDTO.class))
+                .collect(Collectors.toList());
+    }
+
+
 }

@@ -17,4 +17,6 @@ public interface ProductServiceImpl {
     String deleteProduct(Long productId);
 
     ProductDTO getProduct(Long productId);
+
+    List<ProductDTO> searchProducts(String keyword);
 }
