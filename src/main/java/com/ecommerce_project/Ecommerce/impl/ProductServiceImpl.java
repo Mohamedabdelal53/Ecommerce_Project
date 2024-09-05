@@ -10,9 +10,7 @@ import java.util.List;
 public interface ProductServiceImpl {
     List<ProductDTO> getProducts();
 
-    ProductDTO addProduct(Long CatgeoryID,Product product, MultipartFile image) throws IOException;
-
-    ProductDTO updateProduct(Long productId, Product product);
+    ProductDTO addProduct(Long categoryId, ProductDTO productDTO);
 
     ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException;
 

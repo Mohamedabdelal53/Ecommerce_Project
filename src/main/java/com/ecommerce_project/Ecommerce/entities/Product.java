@@ -1,6 +1,8 @@
 package com.ecommerce_project.Ecommerce.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,13 +18,15 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
+    @NotBlank
     private String name;
 
     private String description;
 
+    @PositiveOrZero
     private BigDecimal price;
 
+    @PositiveOrZero
     private int stock;
 
     @ManyToOne

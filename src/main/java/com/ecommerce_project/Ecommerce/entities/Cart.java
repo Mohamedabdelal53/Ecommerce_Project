@@ -1,6 +1,8 @@
 package com.ecommerce_project.Ecommerce.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,14 +20,15 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToMany(mappedBy = "cart", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    private List<CartItem> cartItems = new ArrayList<>();
+
+    @NotNull
+    @PositiveOrZero
+    private BigDecimal totalAmount;
+
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
-    private BigDecimal totalAmount;
-
-
-
-    @OneToMany(mappedBy = "cart", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true)
-    private List<CartItem> cartItems = new ArrayList<>();
 }

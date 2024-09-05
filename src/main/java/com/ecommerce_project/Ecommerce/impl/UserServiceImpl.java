@@ -14,9 +14,11 @@ public interface UserServiceImpl {
 
     String deleteUser(Long id);
 
-    UserDTO getMyUser(Long id);
+    UserDTO getMyUser();
 
     String updateMyUser(Long id, UserDTO userDTO);
 
     UserDTO getuserbyadmin(Long id);
+
+    boolean usernameExists(String username);
 }

@@ -1,5 +1,7 @@
 package com.ecommerce_project.Ecommerce;
 
+import com.ecommerce_project.Ecommerce.DTO.ProductDTO;
+import com.ecommerce_project.Ecommerce.entities.Product;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,6 +16,13 @@ public class EcommerceApplication {
 
 	@Bean
 	public ModelMapper modelMapper() {
-		return new ModelMapper();
+		ModelMapper modelMapper = new ModelMapper();
+
+		modelMapper.typeMap(ProductDTO.class, Product.class).addMappings(mapper -> {
+			mapper.skip(Product::setId); // Assuming your Product entity has a method setId() for productID
+		});
+
+		return modelMapper;
 	}
+
 }

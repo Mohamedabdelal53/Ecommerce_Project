@@ -7,7 +7,6 @@ import com.ecommerce_project.Ecommerce.exception.APIException;
 import com.ecommerce_project.Ecommerce.impl.ProductServiceImpl;
 import com.ecommerce_project.Ecommerce.repository.CategoryRepo;
 import com.ecommerce_project.Ecommerce.repository.ProductRepo;
-import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,10 +25,13 @@ public class ProductService implements ProductServiceImpl {
 
     @Autowired
     private ProductRepo productRepo;
+
     @Autowired
     private CategoryRepo categoryRepo;
+
     @Autowired
     private ModelMapper modelMapper;
+
 
     @Override
     public List<ProductDTO> getProducts() {
@@ -39,41 +41,25 @@ public class ProductService implements ProductServiceImpl {
     }
 
     @Override
-    public ProductDTO addProduct(@NotNull Long categoryID, @NotNull Product product, MultipartFile image) throws IOException {
-        Category category = categoryRepo.findById(categoryID)
+    public ProductDTO addProduct(Long categoryId, ProductDTO productDTO) {
+        Category category = categoryRepo.findById(categoryId)
                 .orElseThrow(() -> new APIException("This Category Does Not Exist"));
 
-        if (productRepo.existsByNameAndDescription(product.getName(), product.getDescription())) {
+        // Check if the product already exists by name and description
+        if (productRepo.existsByNameAndDescription(productDTO.getName(), productDTO.getDescription())) {
             throw new APIException("Product already exists!");
         }
 
-        if (image != null && !image.isEmpty()) {
-            String imageUrl = saveImage(image);
-            product.setImageUrl(imageUrl);
-        } else {
-            product.setImageUrl("default.png");
-        }
-
+        Product product = modelMapper.map(productDTO, Product.class);
         product.setCategory(category);
+        product.setImageUrl("default.png"); // Default image if no image is uploaded yet
+
         Product savedProduct = productRepo.save(product);
         return modelMapper.map(savedProduct, ProductDTO.class);
     }
 
     @Override
-    public ProductDTO updateProduct(@NotNull Long productId,@NotNull Product product) {
-        Product existingProduct = productRepo.findById(productId)
-                .orElseThrow(() -> new APIException("Product not found"));
-
-
-        product.setId(productId);
-        product.setCategory(existingProduct.getCategory());
-        product.setImageUrl(existingProduct.getImageUrl());
-
-        Product updatedProduct = productRepo.save(product);
-        return modelMapper.map(updatedProduct, ProductDTO.class);
-    }
-
-    public ProductDTO updateProductImage(@NotNull Long productId, MultipartFile image) throws IOException {
+    public ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException {
         Product product = productRepo.findById(productId)
                 .orElseThrow(() -> new APIException("Product not found"));
 
@@ -81,7 +67,6 @@ public class ProductService implements ProductServiceImpl {
             throw new APIException("Invalid image file");
         }
 
-        // Save the new image and update the product
         String imageUrl = saveImage(image);
         product.setImageUrl(imageUrl);
 
@@ -90,6 +75,7 @@ public class ProductService implements ProductServiceImpl {
     }
 
     private String saveImage(MultipartFile image) throws IOException {
+
         String uploadDir = "uploaded-images/";
         Path uploadPath = Paths.get(uploadDir);
         if (!Files.exists(uploadPath)) {
@@ -104,18 +90,17 @@ public class ProductService implements ProductServiceImpl {
     }
 
     @Override
-    public String deleteProduct(Long productId) {
+    public ProductDTO getProduct(Long productId) {
         Product product = productRepo.findById(productId)
                 .orElseThrow(() -> new APIException("Product not found"));
-        String prodName = product.getName();
-        productRepo.deleteById(productId);
-        return prodName + " Deleted";
+        return modelMapper.map(product, ProductDTO.class);
     }
 
-
     @Override
-    public ProductDTO getProduct(Long productId) {
-        Product product = productRepo.findById(productId).orElseThrow(()->new APIException("Product Not Found"));
-        return modelMapper.map(product, ProductDTO.class);
+    public String deleteProduct(Long productId) {
+        productRepo.findById(productId)
+                .orElseThrow(() -> new APIException("Product not found"));
+        productRepo.deleteById(productId);
+        return "Product Deleted";
     }
 }

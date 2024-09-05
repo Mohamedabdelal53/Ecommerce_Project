@@ -136,11 +136,11 @@ public class UserService implements UserServiceImpl {
     }
 
     @Override
-    public UserDTO getMyUser(Long id) {
+    public UserDTO getMyUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String authenticatedUsername = authentication.getName();
 
-        Users user = userRepo.findById(id).orElseThrow(() -> new APIException("User Not Found"));
+        Users user = userRepo.findByUsername(authenticatedUsername).orElseThrow(() -> new APIException("User Not Found"));
 
         // Check if the authenticated user is trying to view their own profile
         if (!user.getUsername().equals(authenticatedUsername)) {
@@ -244,6 +244,11 @@ public class UserService implements UserServiceImpl {
                 addressDTOs,
                 null // Assuming CartDTO is not used here
         );
+    }
+
+    @Override
+    public boolean usernameExists(String username) {
+        return userRepo.findByUsername(username).isPresent();
     }
 
 

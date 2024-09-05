@@ -8,6 +8,7 @@ import com.ecommerce_project.Ecommerce.entities.Product;
 import com.ecommerce_project.Ecommerce.entities.Users;
 import com.ecommerce_project.Ecommerce.exception.APIException;
 import com.ecommerce_project.Ecommerce.exception.ResourceNotFoundException;
+import com.ecommerce_project.Ecommerce.impl.CartServiceImpl;
 import com.ecommerce_project.Ecommerce.repository.CartItemRepo;
 import com.ecommerce_project.Ecommerce.repository.CartRepo;
 import com.ecommerce_project.Ecommerce.repository.ProductRepo;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class CartService {
+public class CartService implements CartServiceImpl {
 
     @Autowired
     private UserRepo userRepo;
@@ -214,9 +215,12 @@ public class CartService {
 
         cart.setTotalAmount(cart.getTotalAmount().subtract(cartItem.getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity()))));
 
-        cartItemRepo.deleteFromCartById(cartItem.getId());
-
+        if (cart.getTotalAmount().compareTo(BigDecimal.ZERO) < 0) {
+            return "Amount value cannot be negative";
+        }
         cartRepo.save(cart);
+
+        cartItemRepo.deleteFromCartById(cartItem.getId());
 
         return "Deleted";
     }
