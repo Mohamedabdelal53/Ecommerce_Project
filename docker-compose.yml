@@ -1,0 +1,55 @@
+    version: '3.8'
+
+    services:
+      # Spring Boot application
+      ecommerce-app:
+        build: .
+        container_name: ecommerce-app
+        ports:
+          - "8080:8080"  # Map local port 8080 to the container's port 8080
+        depends_on:
+          - postgres
+        environment:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ecommerce
+          SPRING_DATASOURCE_USERNAME: my_username
+          SPRING_DATASOURCE_PASSWORD: my_complex_password
+          SPRING_JPA_HIBERNATE_DDL_AUTO: update
+        networks:
+          - ecommerce-network
+
+      # PostgreSQL database
+      postgres:
+        image: postgres
+        container_name: postgress_container
+        environment:
+          POSTGRES_DB: ecommerce
+          POSTGRES_USER: my_username
+          POSTGRES_PASSWORD: my_complex_password
+        ports:
+          - "5432:5432"  # Map local port 5432 to the container's port 5432
+        volumes:
+          - postgres-data:/var/lib/postgresql/data
+        networks:
+          - ecommerce-network
+      # pgAdmin for database management
+      pgadmin:
+        image: dpage/pgadmin4
+        container_name: pgadminn_container
+        environment:
+          PGADMIN_DEFAULT_EMAIL: mohamed@example.com
+          PGADMIN_DEFAULT_PASSWORD: admin
+        ports:
+          - "3000:80"  # Map local port 5050 to the container's port 80
+        depends_on:
+          - postgres
+        networks:
+          - ecommerce-network
+
+    # Define the network
+    networks:
+      ecommerce-network:
+        driver: bridge
+
+    # Define volumes for data persistence
+    volumes:
+      postgres-data:

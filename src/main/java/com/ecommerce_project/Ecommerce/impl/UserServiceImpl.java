@@ -2,6 +2,7 @@ package com.ecommerce_project.Ecommerce.impl;
 
 import com.ecommerce_project.Ecommerce.DTO.LoginDTO;
 import com.ecommerce_project.Ecommerce.DTO.UserDTO;
+import com.ecommerce_project.Ecommerce.entities.Users;
 
 import java.util.List;
 
@@ -21,4 +22,6 @@ public interface UserServiceImpl {
     UserDTO getuserbyadmin(Long id);
 
     boolean usernameExists(String username);
+
+    Users promoteToAdmin(Long userId);
 }

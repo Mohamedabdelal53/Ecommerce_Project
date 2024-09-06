@@ -8,6 +8,7 @@ import com.ecommerce_project.Ecommerce.entities.Role;
 import com.ecommerce_project.Ecommerce.entities.Users;
 import com.ecommerce_project.Ecommerce.DTO.UserDTO;
 import com.ecommerce_project.Ecommerce.exception.APIException;
+import com.ecommerce_project.Ecommerce.exception.ResourceNotFoundException;
 import com.ecommerce_project.Ecommerce.impl.UserServiceImpl;
 import com.ecommerce_project.Ecommerce.repository.AddressRepo;
 import com.ecommerce_project.Ecommerce.repository.CartRepo;
@@ -250,6 +251,16 @@ public class UserService implements UserServiceImpl {
     public boolean usernameExists(String username) {
         return userRepo.findByUsername(username).isPresent();
     }
+    @Override
+    public Users promoteToAdmin(Long userId) {
+        Users user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
+        // Fetch the admin role
+        Role adminRole = roleRepo.findByName("ROLE_ADMIN").get();
+
+        // Assign the admin role to the user
+        user.getRoles().add(adminRole);
+        return userRepo.save(user);
+    }
 
 }
